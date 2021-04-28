@@ -1,6 +1,6 @@
 <template>
   <div class="recommend">
-    <scroll ref="scroll" class="recommend-content">
+    <scroll v-if="loadScroll" ref="scroll" class="recommend-content">
       <div>
         <div v-if="recommendList.length" class="slider-wrapper">
           <slider>
@@ -45,31 +45,24 @@ import Slider from '@/base/slider/slider.vue'
 export default class Recommend extends Vue {
   private recommendList: Array<recommend> = []
   private discList: Array<disc> = []
+  private checkImageLoaded = false
 
-  public created (): void {
-    this.getRecommendList()
-    this.getDiscList()
+  private get loadScroll (): boolean {
+    return !!this.recommendList.length && !!this.discList.length
   }
 
-  private getRecommendList (): void {
-    getRecommendList().then((data: Array<recommend>): void => {
-      this.recommendList = data
-      this.refreshScroll()
+  private created (): void {
+    this.getResources()
+  }
+
+  private getResources (): void {
+    Promise.all([
+      getRecommendList(),
+      getDiscList()
+    ]).then(([recommendList, discList]): void => {
+      this.recommendList = recommendList
+      this.discList = discList
     })
-  }
-
-  private getDiscList (): void {
-    getDiscList().then((data: Array<disc>): void => {
-      this.discList = data
-      this.refreshScroll()
-    })
-  }
-
-  private refreshScroll ():void{
-    setTimeout(() => {
-      const scrollRef = this.$refs.scroll as Scroll
-      scrollRef.refresh()
-    }, 20)
   }
 }
 </script>
@@ -89,6 +82,10 @@ export default class Recommend extends Vue {
       position: relative
       width: 100%
       overflow: hidden
+
+      img
+        width 100%
+        height 146px
 
     .recommend-list
       .list-title
