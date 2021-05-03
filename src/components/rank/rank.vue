@@ -32,7 +32,7 @@ export default class Rank extends Vue {
     })
   }
 
-  private breakText (str): string {
+  private breakText (str: string): string {
     if (!str) return '暂无介绍'
     return str.length > 60
       ? str.substr(0, 60) + '...'

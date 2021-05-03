@@ -5529,6 +5529,11 @@ js-message@1.0.7:
   resolved "https://registry.npm.taobao.org/js-message/download/js-message-1.0.7.tgz#fbddd053c7a47021871bb8b2c95397cc17c20e47"
   integrity sha1-+93QU8ekcCGHG7iyyVOXzBfCDkc=
 
+js-pinyin@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/js-pinyin/-/js-pinyin-0.1.9.tgz#cdf19335645ddb20d4630df1058aac25d256adfd"
+  integrity sha1-zfGTNWRd2yDUYw3xBYqsJdJWrf0=
+
 js-queue@2.0.2:
   version "2.0.2"
   resolved "https://registry.npm.taobao.org/js-queue/download/js-queue-2.0.2.tgz#0be590338f903b36c73d33c31883a821412cd482"
