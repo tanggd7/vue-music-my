@@ -5,10 +5,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { getSingerList, singer } from '@/api/singer'
 import { listViewGroup, listViewGroupItem } from '@/base/list-view/list-view'
 import ListView from '@/base/list-view/list-view.vue'
+
+interface groupMap {
+  [propName: string]: listViewGroup;
+}
 
 @Component({
   components: { ListView }
@@ -22,10 +26,10 @@ export default class Singer extends Vue {
     })
   }
 
-  private normalizeSinger (list): Array<listViewGroup> {
-    const map = {}
-    list.forEach((item: singer, index: number) => {
-      const key = item.sIndex
+  private normalizeSinger (list:Array<singer>): Array<listViewGroup> {
+    const map: groupMap = {}
+    list.forEach((item: singer) => {
+      const key: string = item.sIndex
       if (!map[key]) {
         map[key] = {
           title: key,
@@ -36,12 +40,12 @@ export default class Singer extends Vue {
       const obj: listViewGroupItem & singer = { avatar: item.picUrl, ...item }
       items.push(obj)
     })
-    const ret = []
-    for (const key in map) {
+    const ret: Array<listViewGroup> = []
+    Object.keys(map).forEach((key) => {
       const val = map[key]
       ret.push(val)
-    }
-    ret.sort((a, b) => {
+    })
+    ret.sort((a: listViewGroup, b: listViewGroup) => {
       return a.title.charCodeAt(0) - b.title.charCodeAt(0)
     })
     return ret

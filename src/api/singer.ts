@@ -5,10 +5,10 @@ const pinyin = require('js-pinyin')
 const OTHER_INDEX = '其他'
 
 export interface singer {
-  id?: number,
-  name?: string,
-  picUrl?: string,
-  sIndex?: string
+  id: number,
+  name: string,
+  picUrl: string,
+  sIndex: string
 }
 
 export const getSingerList = (): Promise<Array<singer>> => {

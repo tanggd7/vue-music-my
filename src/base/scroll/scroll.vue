@@ -22,8 +22,8 @@ export default class Scroll extends Vue {
     this.scroll && this.scroll.refresh()
   }
 
-  public scrollToElement (): void {
-    this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+  public scrollToElement (...params: Array<any>): void {
+    this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments as any)
   }
 
   private initScroll (): void {

@@ -12,7 +12,7 @@ export const addClass = (el: HTMLElement, className: string): void => {
   el.className = newClass.join(' ')
 }
 
-export const getData = (el: HTMLElement, name: string, val: string): void | null| string => {
+export const getData = (el: Element, name: string, val?: string): void | null| string => {
   const prefix = 'data-'
   if (val) {
     return el.setAttribute(prefix + name, val)

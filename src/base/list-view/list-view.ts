@@ -1,9 +1,9 @@
 export interface listViewGroupItem {
-  avatar?: string,
-  name?: string
+  avatar: string,
+  name: string
 }
 
 export interface listViewGroup {
-  title?: string,
-  items?: Array<listViewGroupItem>
+  title: string,
+  items: Array<listViewGroupItem>
 }

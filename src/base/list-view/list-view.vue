@@ -27,14 +27,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import scroll from '../scroll/scroll'
+import scroll from '@/base/scroll/scroll.vue'
 import { listViewGroup } from './list-view'
 import { getData } from '@/common/js/dom'
 
 interface touch {
-  anchorIndex?: number,
-  y1?: number,
-  y2?: number
+  anchorIndex: number,
+  y1: number,
+  y2: number
 }
 
 const ANCHOR_HEIGHT = 18
@@ -45,28 +45,28 @@ const ANCHOR_HEIGHT = 18
   }
 })
 export default class ListView extends Vue {
-  @Prop({ default: [] }) private data: Array<listViewGroup>
+  @Prop() private data!: Array<listViewGroup>
 
   private currentIndex = 0
-  private touch: touch = {}
+  private touch: touch = { anchorIndex: 0, y1: -1, y2: -1 }
 
   private get shortcutList (): Array<string> {
     return this.data.map(item => item.title?.substr(0, 1))
   }
 
-  private onShortcutTouchStart (e: HTMLElement): void {
-    const anchorIndex = getData(e.target, 'index')
+  private onShortcutTouchStart (e: TouchEvent & Element): void {
+    const anchorIndex = getData(e.target as Element, 'index') || '0'
     const firstTouch = e.touches[0]
     this.touch.y1 = firstTouch.pageY
-    this.touch.anchorIndex = anchorIndex
-    this.scrollTo(parseInt(anchorIndex))
+    this.touch.anchorIndex = parseInt(anchorIndex)
+    this.scrollTo(this.touch.anchorIndex)
   }
 
-  private onShortcutTouchMove (e: HTMLElement): void {
+  private onShortcutTouchMove (e: TouchEvent & Element): void {
     const firstTouch = e.touches[0]
     this.touch.y2 = firstTouch.pageY
     const delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0 // 截断小数后面的数
-    const anchorIndex = parseInt(this.touch.anchorIndex) + delta
+    const anchorIndex = this.touch.anchorIndex + delta
     this.scrollTo(anchorIndex)
   }
 
@@ -80,7 +80,9 @@ export default class ListView extends Vue {
       index = this.shortcutList.length - 1
     }
     this.currentIndex = index
-    this.$refs.listView.scrollToElement(this.$refs.listGroup[index])
+    const listViewRef = this.$refs.listView as scroll
+    const listGroupRef = this.$refs.listGroup as Array<HTMLElement>
+    listViewRef.scrollToElement(listGroupRef[index], 0, false, false)
   }
 }
 </script>
