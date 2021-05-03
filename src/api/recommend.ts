@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 
 export interface recommend {
   pic?: string;
@@ -13,13 +13,15 @@ export interface disc {
 }
 
 export const getRecommendList = (): Promise<Array<recommend>> => {
-  return axios.get('http://localhost:3000/banner?type=2', {}).then((res) => {
-    return res.data.banners as Array<recommend>
-  })
+  return axios.get('http://localhost:3000/banner?type=2', {})
+    .then((res) => {
+      return res.data.banners as Array<recommend>
+    })
 }
 
 export const getDiscList = (): Promise<Array<disc>> => {
-  return axios.get('http://localhost:3000/personalized', {}).then((res) => {
-    return res.data.result as Array<disc>
-  })
+  return axios.get('http://localhost:3000/personalized', {})
+    .then((res) => {
+      return res.data.result as Array<disc>
+    })
 }

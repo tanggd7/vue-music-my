@@ -4,7 +4,7 @@
       <div>
         <div v-if="recommendList.length" class="slider-wrapper">
           <slider>
-            <div v-for="item in recommendList" :key="item.targetId">
+            <div v-for="item in recommendList" :key="item.bannerId">
               <a>
                 <img :src="item.pic" alt="">
               </a>
@@ -52,10 +52,6 @@ export default class Recommend extends Vue {
   }
 
   private created (): void {
-    this.getResources()
-  }
-
-  private getResources (): void {
     Promise.all([
       getRecommendList(),
       getDiscList()
