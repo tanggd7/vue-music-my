@@ -1,5 +1,5 @@
 <template>
-  <scroll v-if="data.length" class="list-view" ref="listView">
+  <scroll v-if="data.length" class="list-view" ref="listView" @scroll="onScroll" :listen-scroll="true">
     <ul>
       <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
@@ -26,16 +26,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import scroll from '@/base/scroll/scroll.vue'
-import { listViewGroup } from './list-view'
+import { IListViewGroup, ITouch } from './list-view'
 import { getData } from '@/common/js/dom'
-
-interface touch {
-  anchorIndex: number,
-  y1: number,
-  y2: number
-}
+import { IPosition } from '@/base/scroll/scroll'
 
 const ANCHOR_HEIGHT = 18
 
@@ -45,13 +40,18 @@ const ANCHOR_HEIGHT = 18
   }
 })
 export default class ListView extends Vue {
-  @Prop() private data!: Array<listViewGroup>
+  @Prop() private data!: Array<IListViewGroup>
 
-  private currentIndex = 0
-  private touch: touch = { anchorIndex: 0, y1: -1, y2: -1 }
+  private currentIndex = 0 // 当前索引
+  private listHeight:Array<number> = [] // 列表每个索引距离顶部的高度
+  private touch: ITouch = {
+    anchorIndex: 0,
+    y1: -1,
+    y2: -1
+  }
 
   private get shortcutList (): Array<string> {
-    return this.data.map(item => item.title?.substr(0, 1))
+    return this.data.map(item => item.title.substr(0, 1))
   }
 
   private onShortcutTouchStart (e: TouchEvent & Element): void {
@@ -83,6 +83,38 @@ export default class ListView extends Vue {
     const listViewRef = this.$refs.listView as scroll
     const listGroupRef = this.$refs.listGroup as Array<HTMLElement>
     listViewRef.scrollToElement(listGroupRef[index])
+  }
+
+  private onScroll (position: IPosition): void {
+    const y = -position.y
+    if (y > 0) {
+      this.currentIndex = 0
+    }
+    for (let i = 0; i < this.listHeight.length - 2; i++) {
+      const h1 = this.listHeight[i]
+      const h2 = this.listHeight[i + 1]
+      if (y >= h1 && y < h2) {
+        this.currentIndex = i
+        return
+      }
+    }
+    this.currentIndex = this.listHeight.length - 1
+  }
+
+  @Watch('data', { immediate: true })
+  private onDataChange (data: Array<IListViewGroup>) {
+    if (data.length) {
+      this.$nextTick(() => {
+        this.listHeight = []
+        const listGroupRef = this.$refs.listGroup as Array<HTMLElement>
+        let height = 0
+        this.listHeight.push(height)
+        listGroupRef.forEach((item: HTMLElement) => {
+          height += item.clientHeight
+          this.listHeight.push(height)
+        })
+      })
+    }
   }
 }
 </script>

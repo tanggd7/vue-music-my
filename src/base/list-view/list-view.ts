@@ -1,9 +1,15 @@
-export interface listViewGroupItem {
+export interface IListViewGroupItem {
   avatar: string,
   name: string
 }
 
-export interface listViewGroup {
+export interface IListViewGroup {
   title: string,
-  items: Array<listViewGroupItem>
+  items: Array<IListViewGroupItem>
+}
+
+export interface ITouch {
+  anchorIndex: number,
+  y1: number,
+  y2: number
 }

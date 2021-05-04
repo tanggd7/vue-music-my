@@ -6,19 +6,19 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { getSingerList, singer } from '@/api/singer'
-import { listViewGroup, listViewGroupItem } from '@/base/list-view/list-view'
+import { getSingerList, ISinger } from '@/api/singer'
+import { IListViewGroup, IListViewGroupItem } from '@/base/list-view/list-view'
 import ListView from '@/base/list-view/list-view.vue'
 
 interface groupMap {
-  [propName: string]: listViewGroup;
+  [propName: string]: IListViewGroup;
 }
 
 @Component({
   components: { ListView }
 })
 export default class Singer extends Vue {
-  private singerList: Array<listViewGroup> = []
+  private singerList: Array<IListViewGroup> = []
 
   private created (): void {
     getSingerList().then((data) => {
@@ -26,9 +26,9 @@ export default class Singer extends Vue {
     })
   }
 
-  private normalizeSinger (list:Array<singer>): Array<listViewGroup> {
+  private normalizeSinger (list:Array<ISinger>): Array<IListViewGroup> {
     const map: groupMap = {}
-    list.forEach((item: singer) => {
+    list.forEach((item: ISinger) => {
       const key: string = item.sIndex
       if (!map[key]) {
         map[key] = {
@@ -37,15 +37,15 @@ export default class Singer extends Vue {
         }
       }
       const { items } = map[key]
-      const obj: listViewGroupItem & singer = { avatar: item.picUrl, ...item }
+      const obj: IListViewGroupItem & ISinger = { avatar: item.picUrl, ...item }
       items.push(obj)
     })
-    const ret: Array<listViewGroup> = []
+    const ret: Array<IListViewGroup> = []
     Object.keys(map).forEach((key) => {
       const val = map[key]
       ret.push(val)
     })
-    ret.sort((a: listViewGroup, b: listViewGroup) => {
+    ret.sort((a: IListViewGroup, b: IListViewGroup) => {
       return a.title.charCodeAt(0) - b.title.charCodeAt(0)
     })
     return ret

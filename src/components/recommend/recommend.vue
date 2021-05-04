@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { getRecommendList, getDiscList, recommend, disc } from '@/api/recommend'
+import { getRecommendList, getDiscList, IRecommend, IDisc } from '@/api/recommend'
 import Scroll from '@/base/scroll/scroll.vue'
 import Slider from '@/base/slider/slider.vue'
 
@@ -43,8 +43,8 @@ import Slider from '@/base/slider/slider.vue'
   }
 })
 export default class Recommend extends Vue {
-  private recommendList: Array<recommend> = []
-  private discList: Array<disc> = []
+  private recommendList: Array<IRecommend> = []
+  private discList: Array<IDisc> = []
   private checkImageLoaded = false
 
   private get loadScroll (): boolean {

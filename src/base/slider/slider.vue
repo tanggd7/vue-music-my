@@ -10,13 +10,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import BScroll from 'better-scroll'
 import { addClass } from '@/common/js/dom'
-
-type SlidePage = {
-  pageX: number
-}
+import { ISlidePage } from '@/base/slider/slider'
 
 @Component({})
 export default class Slider extends Vue {
@@ -68,7 +65,7 @@ export default class Slider extends Vue {
       }
     })
 
-    slider.on('slideWillChange', (page: SlidePage) => {
+    slider.on('slideWillChange', (page: ISlidePage) => {
       this.currentPageIndex = page.pageX
     })
   }

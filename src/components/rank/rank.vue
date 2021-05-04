@@ -16,15 +16,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import Scroll from '@/base/scroll/scroll.vue'
-import { getTopList, top } from '@/api/rank'
+import { getTopList, ITop } from '@/api/rank'
 
 @Component({
   components: { Scroll }
 })
 export default class Rank extends Vue {
-  private topList: Array<top> = []
+  private topList: Array<ITop> = []
 
   private created (): void {
     getTopList().then((data) => {

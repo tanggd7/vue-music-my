@@ -1,15 +1,15 @@
 import axios from 'axios'
 
-export interface top {
+export interface ITop {
   id?: number,
   name?: string,
   description?: string,
   coverImgUrl?: string
 }
 
-export const getTopList = (): Promise<Array<top>> => {
+export const getTopList = (): Promise<Array<ITop>> => {
   return axios.get('http://localhost:3000/toplist', {})
     .then((res) => {
-      return res.data.list as Array<top>
+      return res.data.list as Array<ITop>
     })
 }
