@@ -5,7 +5,7 @@
         <h2 class="list-group-title">{{ group.title }}</h2>
         <uL>
           <li v-for="(item, index) in group.items" :key="index" class="list-group-item">
-            <img class="avatar" :src="item.avatar" alt="">
+            <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{ item.name }}</span>
           </li>
         </uL>
@@ -82,7 +82,7 @@ export default class ListView extends Vue {
     this.currentIndex = index
     const listViewRef = this.$refs.listView as scroll
     const listGroupRef = this.$refs.listGroup as Array<HTMLElement>
-    listViewRef.scrollToElement(listGroupRef[index], 0, false, false)
+    listViewRef.scrollToElement(listGroupRef[index])
   }
 }
 </script>

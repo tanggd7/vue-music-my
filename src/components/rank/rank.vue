@@ -4,7 +4,7 @@
       <ul>
         <li class="item" v-for="item in topList" :key="item.id">
           <div>
-            <img width="100" height="100" :src="item.coverImgUrl" alt=""/>
+            <img width="100" height="100" v-lazy="item.coverImgUrl" alt=""/>
           </div>
           <div class="text">
             <p class="desc">{{ breakText(item.description) }}</p>
