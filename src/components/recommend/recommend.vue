@@ -14,7 +14,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li v-for="item in discList" :key="item.id" class="item">
+            <li v-for="item in discList" :key="item.id" class="item" @click="selectItem(item)">
               <div class="icon">
                 <img width="60" height="60" v-lazy="item.picUrl" alt=""/>
               </div>
@@ -27,6 +27,7 @@
         </div>
       </div>
     </scroll>
+    <router-view/>
   </div>
 </template>
 
@@ -45,7 +46,6 @@ import Slider from '@/base/slider/slider.vue'
 export default class Recommend extends Vue {
   private recommendList: Array<IRecommend> = []
   private discList: Array<IDisc> = []
-  private checkImageLoaded = false
 
   private get loadScroll (): boolean {
     return !!this.recommendList.length && !!this.discList.length
@@ -59,6 +59,10 @@ export default class Recommend extends Vue {
       this.recommendList = recommendList
       this.discList = discList
     })
+  }
+
+  private selectItem (item: IDisc): void {
+    this.$router.push({ path: `/recommend/${item.id}` })
   }
 }
 </script>

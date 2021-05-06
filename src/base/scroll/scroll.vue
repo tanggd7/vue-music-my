@@ -13,6 +13,7 @@ import { IPosition } from '@/base/scroll/scroll'
 export default class Scroll extends Vue {
   @Prop({ default: true }) private click!: boolean
   @Prop({ default: false }) private listenScroll!: boolean
+  @Prop({ default: 2 }) private probeType!: number
 
   private bs?: BScroll
 
@@ -36,12 +37,12 @@ export default class Scroll extends Vue {
     this.bs = new BScroll(this.$refs.wrapper as HTMLElement, {
       scrollY: true,
       click: this.click,
-      probeType: 3
+      probeType: this.probeType
     })
 
     if (this.listenScroll) {
       this.bs.on('scroll', (position: IPosition) => {
-        this.scroll(position)
+        this.scroll && this.scroll(position)
       })
     }
   }

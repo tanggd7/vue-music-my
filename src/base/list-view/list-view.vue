@@ -1,5 +1,5 @@
 <template>
-  <scroll v-if="data.length" class="list-view" ref="listView" @scroll="onScroll" :listen-scroll="true">
+  <scroll v-if="data.length" class="list-view" ref="listView" @scroll="onScroll" :listen-scroll="true" :probe-type="3">
     <ul>
       <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
