@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
-    <list-view :data="singerList"/>
+    <list-view :data="singerList" @on-singer-select="onSingerSelect"/>
+    <router-view/>
   </div>
 </template>
 
@@ -26,7 +27,7 @@ export default class Singer extends Vue {
     })
   }
 
-  private normalizeSinger (list:Array<ISinger>): Array<IListViewGroup> {
+  private normalizeSinger (list: Array<ISinger>): Array<IListViewGroup> {
     const map: groupMap = {}
     list.forEach((item: ISinger) => {
       const key: string = item.sIndex
@@ -49,6 +50,10 @@ export default class Singer extends Vue {
       return a.title.charCodeAt(0) - b.title.charCodeAt(0)
     })
     return ret
+  }
+
+  private onSingerSelect (id: number): void {
+    this.$router.push({ path: `/singer/${id}` })
   }
 }
 </script>

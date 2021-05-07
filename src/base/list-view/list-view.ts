@@ -1,4 +1,5 @@
 export interface IListViewGroupItem {
+  id: number,
   avatar: string,
   name: string
 }

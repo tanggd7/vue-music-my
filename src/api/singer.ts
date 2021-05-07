@@ -29,3 +29,42 @@ const name2PinYing = (array: Array<ISinger>) => {
     }
   })
 }
+
+export interface ISingerDetail {
+  name?: string,
+  bgImage?: string
+}
+
+export const getSingerDetail = (id: string | number): Promise<ISingerDetail> => {
+  return axios.get('http://localhost:3000/artist/detail?id=' + id)
+    .then((res) => {
+      const { artist } = res.data.data
+      const {
+        cover,
+        name
+      } = artist
+      const detail: ISingerDetail = {
+        name,
+        bgImage: cover
+      }
+      return detail
+    })
+}
+
+export interface ISingerDetailSong {
+  id?: number,
+  name?: string,
+  author?: string,
+}
+
+export const getSingerDetailSong = (id: string | number): Promise<Array<ISingerDetailSong>> => {
+  return axios.get('http://localhost:3000/artist/top/song?id=' + id)
+    .then((res) => {
+      const songs = res.data.songs
+      const array: Array<ISingerDetailSong> = songs.map((item: any) => {
+        item.author = item.ar.map((it: any) => it.name).join(' / ')
+        return item
+      })
+      return array
+    })
+}

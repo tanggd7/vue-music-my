@@ -63,7 +63,6 @@ export default class MusicList extends Vue {
 
   private onListScroll (position: IPosition): void {
     const y = position.y
-    console.log(y)
     this.layerRef.style.transform = `translate3d(0,${Math.max(MAX_OFFSET_SCROLL_Y, y)}px,0)`
     if (y < MAX_OFFSET_SCROLL_Y) {
       this.bgImageRef.style.height = `${RESERVED_HEIGHT}px`

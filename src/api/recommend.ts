@@ -57,7 +57,7 @@ export const getDiscDetail = (id: string | number): Promise<any> => {
           return {
             id: item.id,
             name: item.name,
-            author: item.ar.map((it: any) => it.name).join('/')
+            author: item.ar.map((it: any) => it.name).join(' / ')
           }
         })
       }

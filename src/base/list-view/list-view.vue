@@ -4,7 +4,7 @@
       <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <uL>
-          <li v-for="(item, index) in group.items" :key="index" class="list-group-item">
+          <li v-for="(item, index) in group.items" :key="index" @click.stop="onSingerSelect(item.id)" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{ item.name }}</span>
           </li>
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
 import scroll from '@/base/scroll/scroll.vue'
 import { IListViewGroup, ITouch } from './list-view'
 import { getData } from '@/common/js/dom'
@@ -43,7 +43,7 @@ export default class ListView extends Vue {
   @Prop() private data!: Array<IListViewGroup>
 
   private currentIndex = 0 // 当前索引
-  private listHeight:Array<number> = [] // 列表每个索引距离顶部的高度
+  private listHeight: Array<number> = [] // 列表每个索引距离顶部的高度
   private touch: ITouch = {
     anchorIndex: 0,
     y1: -1,
@@ -99,6 +99,11 @@ export default class ListView extends Vue {
       }
     }
     this.currentIndex = this.listHeight.length - 1
+  }
+
+  @Emit()
+  private onSingerSelect (id: number): number {
+    return id
   }
 
   @Watch('data', { immediate: true })
