@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ISong } from '@/common/js/type'
 
 const pinyin = require('js-pinyin')
 
@@ -51,19 +52,15 @@ export const getSingerDetail = (id: string | number): Promise<ISingerDetail> => 
     })
 }
 
-export interface ISingerDetailSong {
-  id?: number,
-  name?: string,
-  author?: string,
-}
-
-export const getSingerDetailSong = (id: string | number): Promise<Array<ISingerDetailSong>> => {
+export const getSingerDetailSong = (id: string | number): Promise<Array<ISong>> => {
   return axios.get('http://localhost:3000/artist/top/song?id=' + id)
     .then((res) => {
       const songs = res.data.songs
-      const array: Array<ISingerDetailSong> = songs.map((item: any) => {
-        item.author = item.ar.map((it: any) => it.name).join(' / ')
-        return item
+      const array: Array<ISong> = songs.map((item: any) => {
+        const song: ISong = { id: item.id, name: item.name }
+        song.author = item.ar.map((it: any) => it.name).join(' / ')
+        song.image = item.al.picUrl
+        return song
       })
       return array
     })

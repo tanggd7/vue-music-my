@@ -5,20 +5,17 @@
     <keep-alive>
       <router-view/>
     </keep-alive>
-<!--    <div id="nav">-->
-<!--      <router-link to="/">Home</router-link> |-->
-<!--      <router-link to="/about">About</router-link>-->
-<!--    </div>-->
-<!--    <router-view/>-->
+    <player/>
   </div>
 </template>
 
 <script>
 import MyHeader from '@/components/my-header/my-header'
 import Tab from '@/components/tab/tab'
+import Player from '@/components/player/player'
 
 export default {
-  components: { MyHeader, Tab }
+  components: { MyHeader, Tab, Player }
 }
 </script>
 

@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import MusicList from '@/base/music-list/music-list.vue'
+import MusicList from '../music-list/music-list.vue'
 import { getDiscDetail, IDiscDetail } from '@/api/recommend'
 
 @Component({ components: { MusicList } })

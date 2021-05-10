@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ISong } from '@/common/js/type'
 
 export interface IRecommend {
   pic?: string;
@@ -26,17 +27,11 @@ export const getDiscList = (): Promise<Array<IDisc>> => {
     })
 }
 
-export interface IDiscDetailSong {
-  id?: number,
-  name?: string,
-  author?: string,
-}
-
 export interface IDiscDetail {
   id?: number,
   name?: string,
   bgImage?: string,
-  songList?: Array<IDiscDetailSong>
+  songList?: Array<ISong>
 }
 
 export const getDiscDetail = (id: string | number): Promise<any> => {
@@ -53,12 +48,11 @@ export const getDiscDetail = (id: string | number): Promise<any> => {
         id,
         name,
         bgImage: coverImgUrl,
-        songList: tracks.map((item: any): IDiscDetailSong => {
-          return {
-            id: item.id,
-            name: item.name,
-            author: item.ar.map((it: any) => it.name).join(' / ')
-          }
+        songList: tracks.map((item: any): ISong => {
+          const song: ISong = { id: item.id, name: item.name }
+          song.author = item.ar.map((it: any) => it.name).join(' / ')
+          song.image = item.al.picUrl
+          return song
         })
       }
       return ret

@@ -16,7 +16,7 @@
     <scroll v-if="songList.length" class="list" :probe-type="3" :listen-scroll="true" @scroll="onListScroll" ref="list">
       <div class="song-list-wrapper" ref="listWrapper">
         <ul>
-          <li v-for="song in songList" :key="song.id" class="item">
+          <li v-for="(song, index) in songList" :key="song.id" class="item" @click="selectSong(index)">
             <div class="content">
               <h2 class="name">{{ song.name }}</h2>
               <p class="desc">{{ song.author }}</p>
@@ -30,9 +30,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { IDiscDetailSong } from '@/api/recommend'
+import { Action } from 'vuex-class'
 import Scroll from '@/base/scroll/scroll.vue'
 import { IPosition } from '@/base/scroll/scroll'
+import { ISong } from '@/common/js/type'
 
 const RESERVED_HEIGHT = 40 // 顶部预留高度
 const MAX_OFFSET_SCROLL_Y = -220 // 向上滚动的最大偏移
@@ -41,7 +42,9 @@ const MAX_OFFSET_SCROLL_Y = -220 // 向上滚动的最大偏移
 export default class MusicList extends Vue {
   @Prop() private title!: string
   @Prop() private bgImage!: string
-  @Prop({ default: () => [] }) private songList!: Array<IDiscDetailSong>
+  @Prop({ default: () => [] }) private songList!: Array<ISong>
+
+  @Action private selectPlay!: (p: any) => void
 
   private bgImageRef!: HTMLElement
   private playBtnRef!: HTMLElement
@@ -73,6 +76,10 @@ export default class MusicList extends Vue {
       this.bgImageRef.style.zIndex = '0'
       this.playBtnRef.style.display = ''
     }
+  }
+
+  private selectSong (index: number): void {
+    this.selectPlay({ list: this.songList, index })
   }
 }
 </script>

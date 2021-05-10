@@ -9,13 +9,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import MusicList from '../../base/music-list/music-list.vue'
-import { getSingerDetail, getSingerDetailSong, ISingerDetail, ISingerDetailSong } from '@/api/singer'
+import MusicList from '../music-list/music-list.vue'
+import { getSingerDetail, getSingerDetailSong, ISingerDetail } from '@/api/singer'
+import { ISong } from '@/common/js/type'
 
 @Component({ components: { MusicList } })
 export default class SingerDetail extends Vue {
   private detail?: ISingerDetail | null = null
-  private songList?: Array<ISingerDetailSong> = []
+  private songList?: Array<ISong> = []
 
   private created (): void {
     const { id } = this.$route.params
