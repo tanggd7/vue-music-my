@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="bg-layer" ref="layer"/>
-    <scroll v-if="songList.length" class="list" :probe-type="3" :listen-scroll="true" @scroll="onListScroll" ref="list">
+    <scroll :data="songList" class="list" :probe-type="3" :listen-scroll="true" @scroll="onListScroll" ref="list">
       <div class="song-list-wrapper" ref="listWrapper">
         <ul>
           <li v-for="(song, index) in songList" :key="song.id" class="item" @click="selectSong(index)">
@@ -29,35 +29,38 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 import Scroll from '@/base/scroll/scroll.vue'
 import { IPosition } from '@/base/scroll/scroll'
 import { ISong } from '@/common/js/type'
+import { PlayListMixin } from '@/common/js/mixins'
 
 const RESERVED_HEIGHT = 40 // 顶部预留高度
 const MAX_OFFSET_SCROLL_Y = -220 // 向上滚动的最大偏移
 
 @Component({ components: { Scroll } })
-export default class MusicList extends Vue {
+export default class MusicList extends Mixins(PlayListMixin) {
   @Prop() private title!: string
   @Prop() private bgImage!: string
   @Prop({ default: () => [] }) private songList!: Array<ISong>
 
   @Action private selectPlay!: (p: any) => void
 
-  private bgImageRef!: HTMLElement
-  private playBtnRef!: HTMLElement
-  private layerRef!: HTMLElement
+  $refs!: {
+    bgImage: HTMLElement,
+    playBtn: HTMLElement,
+    layer: HTMLElement,
+    list: Scroll
+  }
 
   private get bgStyle (): string {
     return `background-image:url(${this.bgImage})`
   }
 
-  private mounted (): void {
-    this.bgImageRef = this.$refs.bgImage as HTMLElement
-    this.playBtnRef = this.$refs.playBtn as HTMLElement
-    this.layerRef = this.$refs.layer as HTMLElement
+  protected handlePlayList (list: Array<ISong>): void {
+    (this.$refs.list.$el as HTMLElement).style.bottom = list.length > 0 ? '60px' : ''
+    this.$refs.list.refresh()
   }
 
   private back (): void {
@@ -66,20 +69,23 @@ export default class MusicList extends Vue {
 
   private onListScroll (position: IPosition): void {
     const y = position.y
-    this.layerRef.style.transform = `translate3d(0,${Math.max(MAX_OFFSET_SCROLL_Y, y)}px,0)`
+    this.$refs.layer.style.transform = `translate3d(0,${Math.max(MAX_OFFSET_SCROLL_Y, y)}px,0)`
     if (y < MAX_OFFSET_SCROLL_Y) {
-      this.bgImageRef.style.height = `${RESERVED_HEIGHT}px`
-      this.bgImageRef.style.zIndex = '10'
-      this.playBtnRef.style.display = 'none'
+      this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+      this.$refs.bgImage.style.zIndex = '10'
+      this.$refs.playBtn.style.display = 'none'
     } else {
-      this.bgImageRef.style.height = '260px'
-      this.bgImageRef.style.zIndex = '0'
-      this.playBtnRef.style.display = ''
+      this.$refs.bgImage.style.height = '260px'
+      this.$refs.bgImage.style.zIndex = '0'
+      this.$refs.playBtn.style.display = ''
     }
   }
 
   private selectSong (index: number): void {
-    this.selectPlay({ list: this.songList, index })
+    this.selectPlay({
+      list: this.songList,
+      index
+    })
   }
 }
 </script>

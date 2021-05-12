@@ -13,7 +13,7 @@ export interface ISinger {
 }
 
 export const getSingerList = (): Promise<Array<ISinger>> => {
-  return axios.get('http://localhost:3000/top/artists?offset=0&limit=30', {})
+  return axios.get('http://localhost:3000/top/artists?offset=0&limit=100', {})
     .then((res) => {
       name2PinYing(res.data.artists)
       return res.data.artists as Array<ISinger>

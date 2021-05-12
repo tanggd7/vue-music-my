@@ -34,16 +34,11 @@ export interface IDiscDetail {
   songList?: Array<ISong>
 }
 
-export const getDiscDetail = (id: string | number): Promise<any> => {
+export const getDiscDetail = (id: string | number): Promise<IDiscDetail> => {
   return axios.get('http://localhost:3000/playlist/detail?id=' + id, {})
     .then((res) => {
       const { playlist } = res.data
-      const {
-        id,
-        name,
-        coverImgUrl,
-        tracks = []
-      } = playlist
+      const { id, name, coverImgUrl, tracks = [] } = playlist
       const ret: IDiscDetail = {
         id,
         name,

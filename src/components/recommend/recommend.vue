@@ -1,6 +1,6 @@
 <template>
-  <div class="recommend">
-    <scroll v-if="loadScroll" ref="scroll" class="recommend-content">
+  <div class="recommend" ref="recommend">
+    <scroll v-show="loadScroll" ref="scroll" class="recommend-content">
       <div>
         <div v-if="recommendList.length" class="slider-wrapper">
           <slider>
@@ -32,10 +32,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { getRecommendList, getDiscList, IRecommend, IDisc } from '@/api/recommend'
+import { Component, Mixins } from 'vue-property-decorator'
+import { getDiscList, getRecommendList, IDisc, IRecommend } from '@/api/recommend'
 import Scroll from '@/base/scroll/scroll.vue'
 import Slider from '@/base/slider/slider.vue'
+import { PlayListMixin } from '@/common/js/mixins'
+import { ISong } from '@/common/js/type'
 
 @Component({
   components: {
@@ -43,15 +45,20 @@ import Slider from '@/base/slider/slider.vue'
     Scroll
   }
 })
-export default class Recommend extends Vue {
+export default class Recommend extends Mixins(PlayListMixin) {
   private recommendList: Array<IRecommend> = []
   private discList: Array<IDisc> = []
+
+  $refs!: {
+    recommend: HTMLElement,
+    scroll: Scroll
+  }
 
   private get loadScroll (): boolean {
     return !!this.recommendList.length && !!this.discList.length
   }
 
-  private created (): void {
+  created (): void {
     Promise.all([
       getRecommendList(),
       getDiscList()
@@ -59,6 +66,11 @@ export default class Recommend extends Vue {
       this.recommendList = recommendList
       this.discList = discList
     })
+  }
+
+  protected handlePlayList (list: Array<ISong>): void {
+    this.$refs.recommend.style.bottom = list.length > 0 ? '60px' : ''
+    this.$refs.scroll.refresh()
   }
 
   private selectItem (item: IDisc): void {

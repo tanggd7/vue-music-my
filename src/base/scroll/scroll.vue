@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
 import BScroll from 'better-scroll'
 import { IPosition } from '@/base/scroll/scroll'
 
@@ -13,11 +13,12 @@ import { IPosition } from '@/base/scroll/scroll'
 export default class Scroll extends Vue {
   @Prop({ default: true }) private click!: boolean
   @Prop({ default: false }) private listenScroll!: boolean
+  @Prop({ default: null }) private data!: Array<any>
   @Prop({ default: 2 }) private probeType!: number
 
   private bs?: BScroll
 
-  public mounted (): void {
+  mounted (): void {
     this.initScroll()
   }
 
@@ -50,6 +51,13 @@ export default class Scroll extends Vue {
   @Emit()
   private scroll (position: IPosition): IPosition {
     return position
+  }
+
+  @Watch('data', { immediate: false })
+  private onDataChange (): void {
+    this.$nextTick(() => {
+      this.refresh()
+    })
   }
 }
 </script>

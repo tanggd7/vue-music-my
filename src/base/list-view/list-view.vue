@@ -1,10 +1,11 @@
 <template>
-  <scroll v-if="data.length" class="list-view" ref="listView" @scroll="onScroll" :listen-scroll="true" :probe-type="3">
+  <scroll :data="data" class="list-view" @scroll="onScroll" :listen-scroll="true" :probe-type="3" ref="listView">
     <ul>
       <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <uL>
-          <li v-for="(item, index) in group.items" :key="index" @click.stop="onSingerSelect(item.id)" class="list-group-item">
+          <li v-for="(item, index) in group.items" :key="index" @click.stop="onSingerSelect(item.id)"
+              class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{ item.name }}</span>
           </li>
@@ -27,7 +28,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
-import scroll from '@/base/scroll/scroll.vue'
+import Scroll from '@/base/scroll/scroll.vue'
 import { IListViewGroup, ITouch } from './list-view'
 import { getData } from '@/common/js/dom'
 import { IPosition } from '@/base/scroll/scroll'
@@ -36,7 +37,7 @@ const ANCHOR_HEIGHT = 18
 
 @Component({
   components: {
-    scroll
+    Scroll
   }
 })
 export default class ListView extends Vue {
@@ -48,6 +49,11 @@ export default class ListView extends Vue {
     anchorIndex: 0,
     y1: -1,
     y2: -1
+  }
+
+  $refs!: {
+    listView: Scroll,
+    listGroup: Array<HTMLElement>
   }
 
   private get shortcutList (): Array<string> {
@@ -80,9 +86,7 @@ export default class ListView extends Vue {
       index = this.shortcutList.length - 1
     }
     this.currentIndex = index
-    const listViewRef = this.$refs.listView as scroll
-    const listGroupRef = this.$refs.listGroup as Array<HTMLElement>
-    listViewRef.scrollToElement(listGroupRef[index])
+    this.$refs.listView.scrollToElement(this.$refs.listGroup[index])
   }
 
   private onScroll (position: IPosition): void {
@@ -99,6 +103,10 @@ export default class ListView extends Vue {
       }
     }
     this.currentIndex = this.listHeight.length - 1
+  }
+
+  refresh (): void {
+    this.$refs.listView.refresh()
   }
 
   @Emit()

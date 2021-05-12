@@ -15,11 +15,12 @@
           </progress-circle>
         </div>
         <div class="control">
-          <i class="icon-playlist"/>
+          <i class="icon-playlist" @click.stop="showPlayList"/>
         </div>
       </div>
     </transition>
-    <audio v-if="url" :src="url" @canplay="onCanplay" @timeupdate="onTimeUpdate" ref="audio"/>
+    <play-list ref="playList"/>
+    <audio v-if="url" :src="url" @canplay="onCanplay" @timeupdate="onTimeUpdate" @ended="onEnded" ref="audio"/>
   </div>
 </template>
 
@@ -30,15 +31,22 @@ import ProgressCircle from '@/base/progress-circle/progress-circle.vue'
 import { ISong } from '@/common/js/type'
 import { getSongUrl } from '@/api/song'
 import { SET_PLAYING_STATE } from '@/store'
+import PlayList from '@/components/play-list/play-list.vue'
 
-@Component({ components: { ProgressCircle } })
+@Component({
+  components: {
+    PlayList,
+    ProgressCircle
+  }
+})
 export default class Player extends Vue {
   private url = ''
   private currentTime = 0
   private playReady = false
 
   $refs!: {
-    audio: HTMLAudioElement
+    audio: HTMLAudioElement,
+    playList: PlayList
   }
 
   @Getter private playing!: number
@@ -73,8 +81,17 @@ export default class Player extends Vue {
     this.currentTime = e.target.currentTime
   }
 
+  private onEnded (): void {
+    this.$refs.audio.currentTime = 0
+    this.togglePlay()
+  }
+
   private togglePlay (): void {
     this.setPlayingState(!this.playing)
+  }
+
+  private showPlayList (): void {
+    this.$refs.playList.show()
   }
 
   @Watch('currentSong', { immediate: true })

@@ -1,15 +1,17 @@
 <template>
-  <div class="singer">
-    <list-view :data="singerList" @on-singer-select="onSingerSelect"/>
+  <div class="singer" ref="singer">
+    <list-view :data="singerList" @on-singer-select="onSingerSelect" ref="list"/>
     <router-view/>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { getSingerList, ISinger } from '@/api/singer'
 import { IListViewGroup, IListViewGroupItem } from '@/base/list-view/list-view'
 import ListView from '@/base/list-view/list-view.vue'
+import { PlayListMixin } from '@/common/js/mixins'
+import { ISong } from '@/common/js/type'
 
 interface groupMap {
   [propName: string]: IListViewGroup;
@@ -18,13 +20,23 @@ interface groupMap {
 @Component({
   components: { ListView }
 })
-export default class Singer extends Vue {
+export default class Singer extends Mixins(PlayListMixin) {
   private singerList: Array<IListViewGroup> = []
 
-  private created (): void {
+  $refs!: {
+    singer: HTMLElement,
+    list: ListView
+  }
+
+  created (): void {
     getSingerList().then((data) => {
       this.singerList = this.normalizeSinger(data)
     })
+  }
+
+  protected handlePlayList (list: Array<ISong>): void {
+    this.$refs.singer.style.bottom = list.length > 0 ? '60px' : ''
+    this.$refs.list.refresh()
   }
 
   private normalizeSinger (list: Array<ISinger>): Array<IListViewGroup> {
