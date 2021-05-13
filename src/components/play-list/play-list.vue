@@ -4,20 +4,20 @@
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon" :class="'icon-sequence'"></i>
-            <span class="text">{{ '顺序播放' }}</span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <i class="icon" :class="iconMode" @click="changeMode"></i>
+            <span class="text">{{ modeText }}</span>
+            <span class="clear" @click="clearList"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <scroll :data="playList" class="list-content" ref="listContent">
+        <scroll :data="sequenceList" class="list-content" ref="listContent">
           <transition-group ref="list" name="list" tag="ul">
-            <li v-for="item in playList" :key="item.id" class="item">
-              <i class="current"></i>
+            <li v-for="(item, index) in sequenceList" :key="item.id" class="item" @click="selectSong(item, index)">
+              <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{ item.name }}</span>
-              <span class="like">
-                <i class="icon-not-favorite"></i>
-              </span>
-              <span class="delete">
+              <!--              <span class="like">-->
+              <!--                <i class="icon-not-favorite"></i>-->
+              <!--              </span>-->
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -39,9 +39,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Action, Getter, Mutation } from 'vuex-class'
 import { ISong } from '@/common/js/type'
 import Scroll from '@/base/scroll/scroll.vue'
+import { SET_CURRENT_INDEX, SET_PLAY_MODE, SET_PLAYING_STATE, SET_SEQUENCE_LIST } from '@/store'
+import { playMode } from '@/common/js/config'
+import { shuffle } from '@/common/js/util'
 
 @Component({
   components: { Scroll }
@@ -50,9 +53,28 @@ export default class PlayList extends Vue {
   private showFlag = false
 
   @Getter private playList!: Array<ISong>
+  @Getter private sequenceList!: Array<ISong>
+  @Getter private currentSong!: ISong
+  @Getter private mode!: number
 
-  $refs !: {
+  @Mutation(SET_SEQUENCE_LIST) private setSequenceList!: (list: Array<ISong>) => void
+  @Mutation(SET_PLAYING_STATE) private setPlayingState!: (flag: boolean) => void
+  @Mutation(SET_CURRENT_INDEX) private setCurrentIndex!: (index: number) => void
+  @Mutation(SET_PLAY_MODE) private setPlayMode!: (num: number) => void
+
+  @Action private clearSongList!: () => void
+  @Action private deleteSong!: (song: ISong) => void
+
+  $refs!: {
     listContent: Scroll
+  }
+
+  private get iconMode (): string {
+    return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+  }
+
+  private get modeText (): string {
+    return this.mode === playMode.sequence ? '顺序播放' : this.mode === playMode.random ? '随机播放' : '单曲循环'
   }
 
   public show (): void {
@@ -64,6 +86,41 @@ export default class PlayList extends Vue {
 
   private hide (): void {
     this.showFlag = false
+  }
+
+  private changeMode (): void {
+    const mode = (this.mode + 1) % 3
+    this.setPlayMode(mode)
+    let list
+    if (mode === playMode.random) {
+      list = shuffle(this.playList)
+    } else {
+      list = this.playList
+    }
+    const index = list.findIndex((item) => item.id === this.currentSong.id)
+    this.setCurrentIndex(index)
+    this.setSequenceList(list)
+  }
+
+  private clearList (): void {
+    this.clearSongList()
+    this.hide()
+  }
+
+  private getCurrentIcon (song: ISong): string {
+    return this.currentSong.id === song.id ? 'icon-play' : ''
+  }
+
+  private selectSong (song: ISong, index: number): void {
+    this.setCurrentIndex(index)
+    this.setPlayingState(true)
+  }
+
+  private deleteOne (song: ISong): void {
+    this.deleteSong(song)
+    if (!this.playList.length) {
+      this.hide()
+    }
   }
 }
 </script>

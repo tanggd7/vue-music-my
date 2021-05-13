@@ -1,5 +1,5 @@
 <template>
-  <div v-show="playList.length" class="player">
+  <div v-show="sequenceList.length" class="player">
     <transition name="mini">
       <div class="mini-player">
         <div class="icon">
@@ -20,7 +20,7 @@
       </div>
     </transition>
     <play-list ref="playList"/>
-    <audio v-if="url" :src="url" @canplay="onCanplay" @timeupdate="onTimeUpdate" @ended="onEnded" ref="audio"/>
+    <audio :src="url" @canplay="onCanplay" @timeupdate="onTimeUpdate" @ended="onEnded" ref="audio"/>
   </div>
 </template>
 
@@ -30,8 +30,9 @@ import { Getter, Mutation } from 'vuex-class'
 import ProgressCircle from '@/base/progress-circle/progress-circle.vue'
 import { ISong } from '@/common/js/type'
 import { getSongUrl } from '@/api/song'
-import { SET_PLAYING_STATE } from '@/store'
+import { SET_CURRENT_INDEX, SET_PLAYING_STATE } from '@/store'
 import PlayList from '@/components/play-list/play-list.vue'
+import { playMode } from '@/common/js/config'
 
 @Component({
   components: {
@@ -51,10 +52,13 @@ export default class Player extends Vue {
 
   @Getter private playing!: number
   @Getter private playList!: Array<ISong>
+  @Getter private sequenceList!: Array<ISong>
   @Getter private currentIndex!: number
   @Getter private currentSong!: ISong
+  @Getter private mode!: number
 
   @Mutation(SET_PLAYING_STATE) private setPlayingState!: (flag: boolean) => void
+  @Mutation(SET_CURRENT_INDEX) private setCurrentIndex!: (index: number) => void
 
   private get miniCdCls (): string {
     return this.playing ? 'play' : 'play pause'
@@ -71,6 +75,7 @@ export default class Player extends Vue {
   private resetPlay (): void {
     this.$refs.audio.currentTime = 0
     this.$refs.audio.play()
+    this.setPlayingState(true)
   }
 
   private onCanplay (): void {
@@ -82,8 +87,16 @@ export default class Player extends Vue {
   }
 
   private onEnded (): void {
+    if (this.mode === playMode.loop) {
+      this.resetPlay()
+      return
+    }
+    let index = this.currentIndex + 1
+    if (index === this.sequenceList.length) {
+      index = 0
+    }
+    this.setCurrentIndex(index)
     this.$refs.audio.currentTime = 0
-    this.togglePlay()
   }
 
   private togglePlay (): void {
@@ -95,8 +108,12 @@ export default class Player extends Vue {
   }
 
   @Watch('currentSong', { immediate: true })
-  private onCurrentSongChange (song: ISong): void {
+  private onCurrentSongChange (song: ISong, oldSong: ISong): void {
     if (!song.id) {
+      this.url = ''
+      return
+    }
+    if (song.id === oldSong.id) {
       return
     }
     getSongUrl(song.id).then((url) => {
@@ -109,6 +126,7 @@ export default class Player extends Vue {
 
   @Watch('playing', { immediate: true })
   private onPlayingChange (playing: boolean): void {
+    // 播放器已准备才进行下面的操作
     if (!this.playReady) {
       return
     }

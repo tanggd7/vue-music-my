@@ -22,7 +22,6 @@ import Scroll from '@/base/scroll/scroll.vue'
 import { getTopList, ITop } from '@/api/rank'
 import { PlayListMixin } from '@/common/js/mixins'
 import { ISong } from '@/common/js/type'
-import { IDisc } from '@/api/recommend'
 
 @Component({
   components: { Scroll }
