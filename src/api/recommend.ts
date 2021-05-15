@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ISong } from '@/common/js/type'
+import { handleWangYiImage2Small } from '@/common/js/util'
 
 export interface IRecommend {
   pic?: string;
@@ -23,7 +24,10 @@ export interface IDisc {
 export const getDiscList = (): Promise<Array<IDisc>> => {
   return axios.get('http://localhost:3000/personalized', {})
     .then((res) => {
-      return res.data.result as Array<IDisc>
+      return res.data.result.map((item: IDisc) => ({
+        ...item,
+        picUrl: handleWangYiImage2Small(item.picUrl)
+      }))
     })
 }
 
@@ -38,15 +42,23 @@ export const getDiscDetail = (id: string | number): Promise<IDiscDetail> => {
   return axios.get('http://localhost:3000/playlist/detail?id=' + id, {})
     .then((res) => {
       const { playlist } = res.data
-      const { id, name, coverImgUrl, tracks = [] } = playlist
+      const {
+        id,
+        name,
+        coverImgUrl,
+        tracks = []
+      } = playlist
       const ret: IDiscDetail = {
         id,
         name,
-        bgImage: coverImgUrl,
+        bgImage: handleWangYiImage2Small(coverImgUrl, '400y400'),
         songList: tracks.map((item: any): ISong => {
-          const song: ISong = { id: item.id, name: item.name }
+          const song: ISong = {
+            id: item.id,
+            name: item.name
+          }
           song.author = item.ar.map((it: any) => it.name).join(' / ')
-          song.image = item.al.picUrl
+          song.image = handleWangYiImage2Small(item.al.picUrl, '300y300')
           return song
         })
       }

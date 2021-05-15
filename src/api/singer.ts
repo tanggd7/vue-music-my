@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ISong } from '@/common/js/type'
+import { handleWangYiImage2Small } from '@/common/js/util'
 
 const pinyin = require('js-pinyin')
 
@@ -16,7 +17,7 @@ export const getSingerList = (): Promise<Array<ISinger>> => {
   return axios.get('http://localhost:3000/top/artists?offset=0&limit=100', {})
     .then((res) => {
       name2PinYing(res.data.artists)
-      return res.data.artists as Array<ISinger>
+      return res.data.artists.map((item: ISinger) => ({ ...item, picUrl: handleWangYiImage2Small(item.picUrl, '100y100') }))
     })
 }
 
@@ -46,7 +47,7 @@ export const getSingerDetail = (id: string | number): Promise<ISingerDetail> => 
       } = artist
       const detail: ISingerDetail = {
         name,
-        bgImage: cover
+        bgImage: handleWangYiImage2Small(cover, '400y400')
       }
       return detail
     })
@@ -59,7 +60,7 @@ export const getSingerDetailSong = (id: string | number): Promise<Array<ISong>> 
       const array: Array<ISong> = songs.map((item: any) => {
         const song: ISong = { id: item.id, name: item.name }
         song.author = item.ar.map((it: any) => it.name).join(' / ')
-        song.image = item.al.picUrl
+        song.image = handleWangYiImage2Small(item.al.picUrl, '300y300')
         return song
       })
       return array

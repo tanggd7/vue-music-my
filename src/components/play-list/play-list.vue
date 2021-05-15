@@ -38,39 +38,24 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter, Mutation } from 'vuex-class'
+import { Component, Mixins } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
 import { ISong } from '@/common/js/type'
 import Scroll from '@/base/scroll/scroll.vue'
-import { SET_CURRENT_INDEX, SET_PLAY_MODE, SET_PLAYING_STATE, SET_SEQUENCE_LIST } from '@/store'
 import { playMode } from '@/common/js/config'
-import { shuffle } from '@/common/js/util'
+import { PlayerMixin } from '@/common/js/mixins'
 
 @Component({
   components: { Scroll }
 })
-export default class PlayList extends Vue {
+export default class PlayList extends Mixins(PlayerMixin) {
   private showFlag = false
-
-  @Getter private playList!: Array<ISong>
-  @Getter private sequenceList!: Array<ISong>
-  @Getter private currentSong!: ISong
-  @Getter private mode!: number
-
-  @Mutation(SET_SEQUENCE_LIST) private setSequenceList!: (list: Array<ISong>) => void
-  @Mutation(SET_PLAYING_STATE) private setPlayingState!: (flag: boolean) => void
-  @Mutation(SET_CURRENT_INDEX) private setCurrentIndex!: (index: number) => void
-  @Mutation(SET_PLAY_MODE) private setPlayMode!: (num: number) => void
 
   @Action private clearSongList!: () => void
   @Action private deleteSong!: (song: ISong) => void
 
   $refs!: {
     listContent: Scroll
-  }
-
-  private get iconMode (): string {
-    return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
   }
 
   private get modeText (): string {
@@ -86,20 +71,6 @@ export default class PlayList extends Vue {
 
   private hide (): void {
     this.showFlag = false
-  }
-
-  private changeMode (): void {
-    const mode = (this.mode + 1) % 3
-    this.setPlayMode(mode)
-    let list
-    if (mode === playMode.random) {
-      list = shuffle(this.playList)
-    } else {
-      list = this.playList
-    }
-    const index = list.findIndex((item) => item.id === this.currentSong.id)
-    this.setCurrentIndex(index)
-    this.setSequenceList(list)
   }
 
   private clearList (): void {

@@ -12,3 +12,12 @@ export const shuffle = <T> (arr: Array<T>): Array<T> => {
   }
   return _arr
 }
+
+export const handleWangYiImage2Small = (url?: string, size = '130y130'): string => {
+  if (!url) {
+    return ''
+  }
+  let urlStr = url + (url.includes('?') ? '&' : '?')
+  urlStr += `&param=${size}`
+  return urlStr
+}

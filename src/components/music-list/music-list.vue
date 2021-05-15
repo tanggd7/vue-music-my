@@ -35,9 +35,12 @@ import Scroll from '@/base/scroll/scroll.vue'
 import { IPosition } from '@/base/scroll/scroll'
 import { ISong } from '@/common/js/type'
 import { PlayListMixin } from '@/common/js/mixins'
+import { prefixStyle } from '@/common/js/dom'
 
 const RESERVED_HEIGHT = 40 // 顶部预留高度
 const MAX_OFFSET_SCROLL_Y = -220 // 向上滚动的最大偏移
+
+const transform = prefixStyle('transform')
 
 @Component({ components: { Scroll } })
 export default class MusicList extends Mixins(PlayListMixin) {
@@ -69,7 +72,7 @@ export default class MusicList extends Mixins(PlayListMixin) {
 
   private onListScroll (position: IPosition): void {
     const y = position.y
-    this.$refs.layer.style.transform = `translate3d(0,${Math.max(MAX_OFFSET_SCROLL_Y, y)}px,0)`
+    this.$refs.layer.style[transform] = `translate3d(0,${Math.max(MAX_OFFSET_SCROLL_Y, y)}px,0)`
     if (y < MAX_OFFSET_SCROLL_Y) {
       this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
       this.$refs.bgImage.style.zIndex = '10'

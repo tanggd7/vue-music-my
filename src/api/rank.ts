@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ISong } from '@/common/js/type'
+import { handleWangYiImage2Small } from '@/common/js/util'
 
 export interface ITop {
   id?: number,
@@ -11,7 +12,7 @@ export interface ITop {
 export const getTopList = (): Promise<Array<ITop>> => {
   return axios.get('http://localhost:3000/toplist', {})
     .then((res) => {
-      return res.data.list as Array<ITop>
+      return res.data.list.map((item: ITop) => ({ ...item, coverImgUrl: handleWangYiImage2Small(item.coverImgUrl) }))
     })
 }
 
@@ -35,14 +36,14 @@ export const getTopListDetail = (id: string | number): Promise<ITopListDetail> =
       const ret: ITopListDetail = {
         id,
         name,
-        bgImage: coverImgUrl,
+        bgImage: handleWangYiImage2Small(coverImgUrl, '400y400'),
         songList: tracks.map((item: any): ISong => {
           const song: ISong = {
             id: item.id,
             name: item.name
           }
           song.author = item.ar.map((it: any) => it.name).join(' / ')
-          song.image = item.al.picUrl
+          song.image = handleWangYiImage2Small(item.al.picUrl, '300y300')
           return song
         })
       }
