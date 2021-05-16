@@ -1,6 +1,6 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll v-show="loadScroll" ref="scroll" class="recommend-content">
+    <scroll ref="scroll" class="recommend-content">
       <div>
         <div v-if="recommendList.length" class="slider-wrapper">
           <slider>
@@ -65,6 +65,9 @@ export default class Recommend extends Mixins(PlayListMixin) {
     ]).then(([recommendList, discList]): void => {
       this.recommendList = recommendList
       this.discList = discList
+      this.$nextTick(() => {
+        this.$refs.scroll.refresh()
+      })
     })
   }
 

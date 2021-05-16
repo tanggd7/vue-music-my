@@ -7,7 +7,7 @@ import { shuffle } from '@/common/js/util'
 
 @Component
 export class PlayListMixin extends Vue {
-  @Getter private playList!: Array<ISong>
+  @Getter protected playList!: Array<ISong>
 
   mounted (): void {
     this.handlePlayList(this.playList)

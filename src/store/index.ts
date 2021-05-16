@@ -16,7 +16,7 @@ export const SET_SEQUENCE_LIST = 'SET_SEQUENCE_LIST'
 export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX'
 export const SET_PLAY_MODE = 'SET_PLAY_MODE'
 
-const findIndex = (list:Array<ISong>, song:ISong) => {
+const findIndex = (list: Array<ISong>, song: ISong) => {
   return list.findIndex((item) => {
     return item.id === song.id
   })
@@ -67,16 +67,31 @@ export default new Vuex.Store({
   },
   actions: {
     // 选中音乐列表中的一首歌
-    selectPlay ({ commit, state }, { list, index }) {
+    selectPlay ({
+      commit,
+      state
+    }, {
+      list,
+      index
+    }) {
       commit(SET_PLAYLIST, list)
       if (state.mode === playMode.random) {
-        const randomList:Array<ISong> = shuffle(list)
+        const randomList: Array<ISong> = shuffle(list)
         commit(SET_SEQUENCE_LIST, randomList)
         index = findIndex(randomList, list[index])
       } else {
         commit(SET_SEQUENCE_LIST, list)
       }
       commit(SET_CURRENT_INDEX, index)
+      commit(SET_FULL_SCREEN, true)
+      commit(SET_PLAYING_STATE, true)
+    },
+    // 随机播放列表
+    randomPlay ({ commit }, { list }) {
+      commit(SET_PLAY_MODE, playMode.random)
+      commit(SET_SEQUENCE_LIST, shuffle(list))
+      commit(SET_PLAYLIST, list)
+      commit(SET_CURRENT_INDEX, 0)
       commit(SET_FULL_SCREEN, true)
       commit(SET_PLAYING_STATE, true)
     },
@@ -88,7 +103,10 @@ export default new Vuex.Store({
       commit(SET_PLAYING_STATE, false)
     },
     // 删除列表中的一首歌
-    deleteSong ({ commit, state }, song) {
+    deleteSong ({
+      commit,
+      state
+    }, song) {
       const playList = state.playList.slice()
       const sequenceList = state.sequenceList.slice()
       let currentIndex = state.currentIndex

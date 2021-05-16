@@ -6,7 +6,7 @@
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div v-show="songList.length" class="play-wrapper">
-        <div class="play" ref="playBtn">
+        <div class="play" ref="playBtn" @click="random">
           <i class="icon-play"/>
           <span class="text">随机播放全部</span>
         </div>
@@ -49,6 +49,7 @@ export default class MusicList extends Mixins(PlayListMixin) {
   @Prop({ default: () => [] }) private songList!: Array<ISong>
 
   @Action private selectPlay!: (p: any) => void
+  @Action private randomPlay!: (p: any) => void
 
   $refs!: {
     bgImage: HTMLElement,
@@ -82,6 +83,12 @@ export default class MusicList extends Mixins(PlayListMixin) {
       this.$refs.bgImage.style.zIndex = '0'
       this.$refs.playBtn.style.display = ''
     }
+  }
+
+  private random (): void {
+    this.randomPlay({
+      list: this.songList
+    })
   }
 
   private selectSong (index: number): void {
