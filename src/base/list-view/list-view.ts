@@ -1,7 +1,8 @@
 export interface IListViewGroupItem {
   id: number,
-  avatar: string,
-  name: string
+  avatar?: string,
+  name?: string,
+  group?: string
 }
 
 export interface IListViewGroup {

@@ -121,6 +121,49 @@ export default new Vuex.Store({
       commit(SET_SEQUENCE_LIST, sequenceList)
       commit(SET_CURRENT_INDEX, currentIndex)
       commit(SET_PLAYING_STATE, !!playList.length)
+    },
+    // 新增一首歌
+    insertSong ({ commit, state }, song: ISong) {
+      const playlist = state.playList.slice()
+      const sequenceList = state.sequenceList.slice()
+      let currentIndex = state.currentIndex
+      // 记录当前歌曲
+      const currentSong = sequenceList[currentIndex]
+      // 查找当前列表中是否有待插入的歌曲并返回其索引
+      const fpIndex = findIndex(sequenceList, song)
+      // 因为是插入歌曲，所以索引+1
+      currentIndex++
+      // 插入这首歌到当前索引位置
+      sequenceList.splice(currentIndex, 0, song as never)
+      // 如果已经包含了这首歌
+      if (fpIndex > -1) {
+        // 如果当前插入的序号大于列表中的序号
+        if (currentIndex > fpIndex) {
+          // 删除已存在的歌
+          sequenceList.splice(fpIndex, 1)
+          currentIndex--
+        } else {
+          // 删除刚添加的歌
+          sequenceList.splice(fpIndex + 1, 1)
+        }
+      }
+
+      const currentSIndex = findIndex(playlist, currentSong) + 1
+      const fsIndex = findIndex(playlist, song)
+      playlist.splice(currentSIndex, 0, song as never)
+      if (fsIndex > -1) {
+        if (currentSIndex > fsIndex) {
+          playlist.splice(fsIndex, 1)
+        } else {
+          playlist.splice(fsIndex + 1, 1)
+        }
+      }
+
+      commit(SET_PLAYLIST, playlist)
+      commit(SET_SEQUENCE_LIST, sequenceList)
+      commit(SET_CURRENT_INDEX, currentIndex)
+      commit(SET_FULL_SCREEN, true)
+      commit(SET_PLAYING_STATE, true)
     }
   },
   modules: {}

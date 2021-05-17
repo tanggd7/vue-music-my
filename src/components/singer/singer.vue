@@ -1,6 +1,6 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view :data="singerList" @on-singer-select="onSingerSelect" ref="list"/>
+    <list-view :data="singerList" @on-select="onSingerSelect" ref="list"/>
     <router-view/>
   </div>
 </template>
@@ -50,7 +50,7 @@ export default class Singer extends Mixins(PlayListMixin) {
         }
       }
       const { items } = map[key]
-      const obj: IListViewGroupItem & ISinger = { avatar: item.picUrl, ...item }
+      const obj: IListViewGroupItem & ISinger = { avatar: item.picUrl, ...item, group: key }
       items.push(obj)
     })
     const ret: Array<IListViewGroup> = []
@@ -64,8 +64,8 @@ export default class Singer extends Mixins(PlayListMixin) {
     return ret
   }
 
-  private onSingerSelect (id: number): void {
-    this.$router.push({ path: `/singer/${id}` })
+  private onSingerSelect (item: IListViewGroupItem): void {
+    this.$router.push({ path: `/singer/${item.id}` })
   }
 }
 </script>

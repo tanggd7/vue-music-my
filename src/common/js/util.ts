@@ -21,3 +21,18 @@ export const handleWangYiImage2Small = (url?: string, size = '130y130'): string 
   urlStr += `&param=${size}`
   return urlStr
 }
+
+export const debounce = (func: (...args: any) => void, delay: number): () => void => {
+  let timer = 0
+
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      func.apply(this, args)
+    }, delay)
+  }
+}

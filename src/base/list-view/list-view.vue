@@ -4,18 +4,20 @@
       <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <uL>
-          <li v-for="(item, index) in group.items" :key="index" @click.stop="onSingerSelect(item.id)"
+          <li v-for="(item, index) in group.items" :key="index" @click.stop="onSelect(item)"
               class="list-group-item">
-            <img class="avatar" v-lazy="item.avatar" alt="">
+            <img v-if="showAvatar" v-lazy="item.avatar" class="avatar" alt="">
             <span class="name">{{ item.name }}</span>
           </li>
         </uL>
       </li>
     </ul>
-    <div class="list-shortcut"
-         @touchstart.stop.prevent="onShortcutTouchStart"
-         @touchmove.stop.prevent="onShortcutTouchMove"
-         @touchend.stop>
+    <div
+      v-show="showShortcut"
+      class="list-shortcut"
+      @touchstart.stop.prevent="onShortcutTouchStart"
+      @touchmove.stop.prevent="onShortcutTouchMove"
+      @touchend.stop>
       <ul>
         <li v-for="(item, index) in shortcutList" :key="index" :data-index="index" class="item"
             :class="{ 'current': currentIndex === index }">
@@ -29,7 +31,7 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
 import Scroll from '@/base/scroll/scroll.vue'
-import { IListViewGroup, ITouch } from './list-view'
+import { IListViewGroup, IListViewGroupItem, ITouch } from './list-view'
 import { getData } from '@/common/js/dom'
 import { IPosition } from '@/base/scroll/scroll'
 
@@ -42,6 +44,8 @@ const ANCHOR_HEIGHT = 18
 })
 export default class ListView extends Vue {
   @Prop() private data!: Array<IListViewGroup>
+  @Prop({ default: true }) private showShortcut!: boolean
+  @Prop({ default: true }) private showAvatar!: boolean
 
   private currentIndex = 0 // 当前索引
   private listHeight: Array<number> = [] // 列表每个索引距离顶部的高度
@@ -110,8 +114,8 @@ export default class ListView extends Vue {
   }
 
   @Emit()
-  private onSingerSelect (id: number): number {
-    return id
+  private onSelect (item: IListViewGroupItem): IListViewGroupItem {
+    return item
   }
 
   @Watch('data', { immediate: true })
