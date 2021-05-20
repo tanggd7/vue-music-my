@@ -40,8 +40,8 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
-import { ISong } from '@/common/js/type'
 import Scroll from '@/base/scroll/scroll.vue'
+import { ISong } from '@/common/js/type'
 import { playMode } from '@/common/js/config'
 import { PlayerMixin } from '@/common/js/mixins'
 
