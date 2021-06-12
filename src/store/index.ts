@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import { ISong } from '@/common/js/type'
 import { playMode } from '@/common/js/config'
 import { shuffle } from '@/common/js/util'
+import createPersistedState from 'vuex-persistedstate'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import createLogger from 'vuex/dist/logger'
@@ -16,6 +17,10 @@ export const SET_SEQUENCE_LIST = 'SET_SEQUENCE_LIST'
 export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX'
 export const SET_PLAY_MODE = 'SET_PLAY_MODE'
 
+const createPersisted = createPersistedState({
+  storage: window.sessionStorage
+})
+
 const findIndex = (list: Array<ISong>, song: ISong) => {
   return list.findIndex((item) => {
     return item.id === song.id
@@ -24,7 +29,7 @@ const findIndex = (list: Array<ISong>, song: ISong) => {
 
 export default new Vuex.Store({
   strict: true,
-  plugins: [createLogger()],
+  plugins: [createLogger(), createPersisted],
   state: {
     playing: false, // 是否正在播放
     fullScreen: false, // 播放页面
