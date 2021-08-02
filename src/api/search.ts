@@ -1,15 +1,16 @@
 import axios from 'axios'
 import { IListViewGroup, IListViewGroupItem } from '@/base/list-view/list-view'
+import { API_PREFIX } from './config'
 
 export const getSearchHotList = (): Promise<Array<string>> => {
-  return axios.get('http://localhost:3000/search/hot')
+  return axios.get(`${API_PREFIX}/search/hot`)
     .then((res) => {
       return res.data.result.hots.map((item: any) => item.first)
     })
 }
 
 export const getSearchList = (text: string): Promise<Array<IListViewGroup>> => {
-  return axios.get('http://localhost:3000/search/suggest', { params: { keywords: text } })
+  return axios.get(`${API_PREFIX}/search/suggest`, { params: { keywords: text } })
     .then((res) => {
       const { result } = res.data
       const { artists, songs, playlists } = result

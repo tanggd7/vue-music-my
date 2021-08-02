@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ISong } from '@/common/js/type'
 import { handleWangYiImage2Small } from '@/common/js/util'
+import { API_PREFIX } from './config'
 
 const pinyin = require('js-pinyin')
 
@@ -14,7 +15,7 @@ export interface ISinger {
 }
 
 export const getSingerList = (): Promise<Array<ISinger>> => {
-  return axios.get('http://localhost:3000/top/artists?offset=0&limit=100', {})
+  return axios.get(`${API_PREFIX}/top/artists?offset=0&limit=100`, {})
     .then((res) => {
       name2PinYing(res.data.artists)
       return res.data.artists.map((item: ISinger) => ({ ...item, picUrl: handleWangYiImage2Small(item.picUrl, '100y100') }))
@@ -38,7 +39,7 @@ export interface ISingerDetail {
 }
 
 export const getSingerDetail = (id: string | number): Promise<ISingerDetail> => {
-  return axios.get('http://localhost:3000/artist/detail?id=' + id)
+  return axios.get(`${API_PREFIX}/artist/detail?id=` + id)
     .then((res) => {
       const { artist } = res.data.data
       const {
@@ -54,7 +55,7 @@ export const getSingerDetail = (id: string | number): Promise<ISingerDetail> => 
 }
 
 export const getSingerDetailSong = (id: string | number): Promise<Array<ISong>> => {
-  return axios.get('http://localhost:3000/artist/top/song?id=' + id)
+  return axios.get(`${API_PREFIX}/artist/top/song?id=` + id)
     .then((res) => {
       const songs = res.data.songs
       const array: Array<ISong> = songs.map((item: any) => {

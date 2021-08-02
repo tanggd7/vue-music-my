@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ISong } from '@/common/js/type'
 import { handleWangYiImage2Small } from '@/common/js/util'
+import { API_PREFIX } from './config'
 
 export interface IRecommend {
   pic?: string;
@@ -8,7 +9,7 @@ export interface IRecommend {
 }
 
 export const getRecommendList = (): Promise<Array<IRecommend>> => {
-  return axios.get('http://localhost:3000/banner?type=2', {})
+  return axios.get(`${API_PREFIX}/banner?type=2`, {})
     .then((res) => {
       return res.data.banners as Array<IRecommend>
     })
@@ -22,7 +23,7 @@ export interface IDisc {
 }
 
 export const getDiscList = (): Promise<Array<IDisc>> => {
-  return axios.get('http://localhost:3000/personalized', {})
+  return axios.get(`${API_PREFIX}/personalized`, {})
     .then((res) => {
       return res.data.result.map((item: IDisc) => ({
         ...item,
@@ -39,7 +40,7 @@ export interface IDiscDetail {
 }
 
 export const getDiscDetail = (id: string | number): Promise<IDiscDetail> => {
-  return axios.get('http://localhost:3000/playlist/detail?id=' + id, {})
+  return axios.get(`${API_PREFIX}/playlist/detail?id=` + id, {})
     .then((res) => {
       const { playlist } = res.data
       const {

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ISong } from '@/common/js/type'
 import { handleWangYiImage2Small } from '@/common/js/util'
+import { API_PREFIX } from './config'
 
 export interface ITop {
   id?: number,
@@ -10,7 +11,7 @@ export interface ITop {
 }
 
 export const getTopList = (): Promise<Array<ITop>> => {
-  return axios.get('http://localhost:3000/toplist', {})
+  return axios.get(`${API_PREFIX}/toplist`, {})
     .then((res) => {
       return res.data.list.map((item: ITop) => ({ ...item, coverImgUrl: handleWangYiImage2Small(item.coverImgUrl) }))
     })
@@ -24,7 +25,7 @@ export interface ITopListDetail {
 }
 
 export const getTopListDetail = (id: string | number): Promise<ITopListDetail> => {
-  return axios.get('http://localhost:3000/playlist/detail', { params: { id } })
+  return axios.get(`${API_PREFIX}/playlist/detail`, { params: { id } })
     .then((res) => {
       const { playlist } = res.data
       const {

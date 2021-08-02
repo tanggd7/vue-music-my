@@ -1,15 +1,16 @@
 import axios from 'axios'
 import { ISong } from '@/common/js/type'
+import { API_PREFIX } from './config'
 
 export const getSongUrl = (id: number): Promise<string> => {
-  return axios.get('http://localhost:3000/song/url', { params: { id } })
+  return axios.get(`${API_PREFIX}/song/url`, { params: { id } })
     .then((res) => {
       return res.data.data.length ? res.data.data[0].url : ''
     })
 }
 
 export const getSongDetail = (id: number) : Promise<ISong> => {
-  return axios.get('http://localhost:3000/song/detail', { params: { ids: id } })
+  return axios.get(`${API_PREFIX}/song/detail`, { params: { ids: id } })
     .then((res) => {
       const songRet = res.data.songs[0]
       const song:ISong = {
